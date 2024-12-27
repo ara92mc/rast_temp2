@@ -1,0 +1,40 @@
+#Aqui va tus librerias
+# Open the NetCDF file
+ncfile = rasterio.open('C:/Users/Mallma/Documents/Python Scripts/0.Other_projects/tas_Paris_UrbClim_2017_09_v1.0_santinized.nc')
+# Initialize arrays to store min, max, and mean temperatures for each hour
+min_temps = np.zeros(24)
+max_temps = np.zeros(24)
+mean_temps = np.zeros(24)
+
+# Loop through each hour (0-23) and calculate min, max, and mean temperatures
+for hour in range(24):
+    min_hourly = []
+    max_hourly = []
+    mean_hourly = []
+    for day in range(30):
+        index = hour + day * 24
+        data = ncfile.read(index + 1)
+        min_hourly.append(np.min(data))
+        max_hourly.append(np.max(data))
+        mean_hourly.append(np.mean(data))
+    min_temps[hour] = np.mean(min_hourly)
+    max_temps[hour] = np.mean(max_hourly)
+    mean_temps[hour] = np.mean(mean_hourly)
+
+# Convert temperatures from Kelvin to Celsius
+min_temps_celsius = min_temps - 273.15
+max_temps_celsius = max_temps - 273.15
+mean_temps_celsius = mean_temps - 273.15
+
+# Plot the temperatures
+hours = np.arange(24)
+plt.figure(figsize=(12, 6))
+plt.plot(hours, min_temps_celsius, label='Min Temperature (°C)')
+plt.plot(hours, max_temps_celsius, label='Max Temperature (°C)')
+plt.plot(hours, mean_temps_celsius, label='Mean Temperature (°C)')
+plt.xlabel('Hours')
+plt.ylabel('Temperature (°C)')
+plt.title('Temperature per Hour')
+plt.legend()
+plt.grid(True)
+plt.show()
